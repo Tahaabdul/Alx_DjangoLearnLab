@@ -2,9 +2,13 @@ from django.shortcuts import render
 from .models import Book
 from django.views.generic.detail import DetailView
 from .models import Library
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import logout
+from django.contrib import messages
 
 def list_books(request):
     books = Book.objects.all()
@@ -26,3 +30,21 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
+# View for user login
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect to the home page or dashboard
+        else:
+            messages.error(request, 'Invalid credentials')
+    return render(request, 'relationship_app/login.html')
+
+# View for user logout
+def user_logout(request):
+    logout(request)
+    return redirect('login')  # Redirect to the login page after logging out
