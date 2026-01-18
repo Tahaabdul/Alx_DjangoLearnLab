@@ -1,1 +1,1 @@
-Library project for Django test
+#Library project for Django test
